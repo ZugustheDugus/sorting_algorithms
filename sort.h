@@ -35,5 +35,11 @@ void print_half(int *array, int start, int end);
 void heap_sort(int *array, size_t size);
 void heapify(int *array, int parent, int size, int array_len);
 void swap(int *x, int *y);
+int getMax(int array[], int n);
+void countingSort(int array[], int size, int place);
+void radixsort(int array[], int size);
+void printArray(int array[], int size);
+
+
 
 #endif
