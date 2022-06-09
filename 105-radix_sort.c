@@ -1,70 +1,98 @@
-// Radix Sort in C Programming
-
 #include "sort.h"
 
-// Function to get the largest element from an array
-int getMax(int array[], int n) {
-  int max = array[0];
-  for (int i = 1; i < n; i++)
-    if (array[i] > max)
-      max = array[i];
-  return max;
+/**
+ * get_max - gets highest element of array
+ * @array: the array
+ * @size: size of array
+ * Return: Max
+ */
+
+int get_max(int *array, int size)
+{
+	int i;
+	int max = array[0];
+
+	for (i = 0; i < size; ++i)
+	{
+		if (array[i] > max)
+			max = array[i];
+	}
+	return (max);
 }
 
-// Using counting sort to sort the elements in the basis of significant places
-void countingSort(int array[], int size, int place) {
-  int output[size + 1];
-  int max = (array[0] / place) % 10;
+/**
+ * _calloc - malloc and fill an array
+ * @n: size of array
+ * Return: pointer to array
+ */
+int *_calloc(int n)
+{
+	int j;
+	int *new;
 
-  for (int i = 1; i < size; i++) {
-    if (((array[i] / place) % 10) > max)
-      max = array[i];
-  }
-  int count[max + 1];
-
-  for (int i = 0; i < max; ++i)
-    count[i] = 0;
-
-  // Calculate count of elements
-  for (int i = 0; i < size; i++)
-    count[(array[i] / place) % 10]++;
-    
-  // Calculate cumulative count
-  for (int i = 1; i < 10; i++)
-    count[i] += count[i - 1];
-
-  // Place the elements in sorted order
-  for (int i = size - 1; i >= 0; i--) {
-    output[count[(array[i] / place) % 10] - 1] = array[i];
-    count[(array[i] / place) % 10]--;
-  }
-
-  for (int i = 0; i < size; i++)
-    array[i] = output[i];
+	new = malloc(sizeof(int) * (n));
+	if (!new)
+	{
+		return (NULL);
+	}
+		/* fill empty array */
+	for (j = 0; j < n; j++)
+		new[j] = 0;
+	return (new);
 }
 
-// Main function to implement radix sort
-void radixsort(int array[], int size) {
-  // Get maximum element
-  int max = getMax(array, size);
+/**
+ * countSort - Count sort
+ * @arr: array
+ * @size: size
+ * @exp: exponet
+ */
+void countSort(int *arr, int size, int exp)
+{
+	int *count, *output, i;
 
-  // Apply counting sort to sort elements based on place value.
-  for (int place = 1; max / place > 0; place *= 10)
-    countingSort(array, size, place);
+	count = _calloc(10);
+	if (!count)
+		return;
+
+	for (i = 0; i < size; i++)
+		count[(arr[i] / exp) % 10]++;
+	for (i = 1; i < 10; i++)
+		count[i] = count[i] + count[i - 1];
+	output = malloc(sizeof(int) * (size));
+	if (!output)
+		return;
+	for (i = size - 1; i >= 0; i--)
+	{
+		output[count[(arr[i] / exp) % 10] - 1] = arr[i];
+		count[(arr[i] / exp) % 10]--;
+	}
+	for (i = 0; i < size; i++)
+		arr[i] = output[i];
+	free(output);
+	free(count);
 }
 
-// Print an array
-void printArray(int array[], int size) {
-  for (int i = 0; i < size; ++i) {
-    printf("%d  ", array[i]);
-  }
-  printf("\n");
-}
+/**
+ * radix_sort - radix sort implemnation
+ * @size: size of array
+ * @array: array to sort
+ *
+ */
+void radix_sort(int *array, size_t size)
+{
 
-// Driver code
-int main() {
-  int array[] = {121, 432, 564, 23, 1, 45, 788};
-  int n = sizeof(array) / sizeof(array[0]);
-  radixsort(array, n);
-  printArray(array, n);
+	int exp, max;
+
+	if (!array || size < 2)
+		return;
+
+	max = get_max(array, size);
+
+	for (exp = 1; max / exp > 0; exp *= 10)
+	{
+		countSort(array, size, exp);
+		print_array(array, size);
+	}
+
 }
